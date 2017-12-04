@@ -19,9 +19,10 @@ The raw page text and its category information were written to a collection on a
 The code can be run via the command line, the steps are as follows:
 
 1. Work your way into the directory containing the script
-2. Type ```bash
+2. Type ```
 	$ python collect.py "some category" #nesting_level#```
-e.g. ```bash $ python collect.py 'machine learning' 3```
+
+e.g. ```$ python collect.py 'machine learning' 3```
 
 The command line will output the category for every 10 pages collected to ensure that it is running correctly
 
