@@ -1,76 +1,47 @@
 # Semantic Search
 
 ## The Task
-The objective of this assignment is to engineer a novel wikipedia search engine using what you've learned about data collection, infrastructure, and natural language processing.
+The objective of this assignment is to engineer a novel wikipedia search engine using what we've learned about data collection, infrastructure, and natural language processing.
 
 The task has two **required sections:**
 - Data collection
 - Search algorithm development
 
-And one **optional section:** 
-  - Predictive modeling
+### Part 1 -- Collection
 
-![](http://interactive.blockdiag.com/image?compression=deflate&encoding=base64&src=eJxdjrsOwjAMRXe-wlsmRhaQkDoiMSDxBW5slahtHDmGCiH-nfQxtKy-59zruhPfUsAGPjsA56XvMdIRSIbYCZKD_RncENqQuGBQ3S7TidCwxsynjZUZ1T8m4HqvJlXZnhrBJMHBbWlTDHEeSFravYUXQy_E3TKrwbioMKb5z16UmRxfXZurVY_GjegbhqJIjaXm-wNmzE4W)
-
-### Part 1 -- Collection (required)
-
-We want you to query the wikipedia API and **collect all of the articles** under the following wikipedia categories:
+We will query the wikipedia API and collect all of the articles for a specified category. For the purposes of this project, we will look at two categories (however this can be applied to any specified category) 
 
 * [Machine Learning](https://en.wikipedia.org/wiki/Category:Machine_learning)
 * [Business Software](https://en.wikipedia.org/wiki/Category:Business_software)
 
-The raw page text and its category information should be written to a collection on a Mongo server running on a dedicated AWS instance.
+The raw page text and its category information were written to a collection on a Mongo server running on a dedicated AWS instance.
 
-We want your code to be modular enough that any valid category from Wikipedia can be queried by your code. You are encouraged to exploit this modularity to pull additional wikipedia categories beyond ML and Business Software. As always, the more data the better. 
+The code can be run via the command line, the steps are as follows:
 
-**Note:** Both "Machine Learning" and "Business Software" contain a heirarchy of nested sub-categories. Make sure that you pull every single page within each parent category, not just those directly beneath them. Take time to explore wikipedia's organization structure. It is up to you if you want to model this heirarchy anywhere within Mongo, otherwise flatten it by only recording the parent category associated with each page.
+1. Work your way into the directory containing the script
+2. Type ```bash
+	$ python collect.py "some category" #nesting_level#```
+e.g. ```bash $ python collect.py 'machine learning' 3```
 
-**optional**  
-Make it so that your code can be run via a python script e.g.
+The command line will output the category for every 10 pages collected to ensure that it is running correctly
 
-```bash
-$ docker run --rm -v $(pwd):/home/jovyan jupyter/scipy-notebook python download.py #SOME_CATEGORY#
-```
-This docker command starts a disposable scipy-notebook container for one-time use to run your script, `download.py`. Where `#SOME_CATEGORY#` is the wikipedia category to be downloaded. Read about passing arguments to python scripts here: https://docs.python.org/3/library/sys.html. 
 
-**optional**  
-Make it so that your code can query nested sub-categories e.g.
+### Part 2 -- Search
 
-```bash
-$ docker run --rm -v $(pwd):/home/jovyan jupyter/scipy-notebook python download.py #SOME_CATEGORY# #NESTING_LEVEL#
-```
+We used Latent Semantic Analysis to search the pages. For a given search query, we found the top 5 related articles to the search query using SVD and cosine similarity. 
 
-### Part 2 -- Search (required)
-
-Use Latent Semantic Analysis to search your pages. Given a search query, find the top 5 related articles to the search query. SVD and cosine similarity are a good place to start. 
-
-**optional**  
-Make it so that your code can be run via a python script e.g.
+This can also be run via the command line e.g.
 
 ```bash
-$ docker run --rm -v $(pwd):/home/jovyan jupyter/scipy-notebook python search.py #SOME_TERM#
+$ python search.py "discriminant"
 ```
 
-### Part 3 -- Predictive Model (optional)
+The command line will then output the top 5 related articles for the given search word
 
-In this part, we want you to build a predictive model from the data you've just indexed. Specifically, when a new article from wikipedia comes along, we would like to be able to predict what category the article should fall into. We expect a training script of some sort that is runnable and will estimate a model. 
+### Further Work
 
-Make it so that your code can be run via a python script e.g.
+Ideally we would like to build a predictive model. More specifically, when a new article is published on Wikipedia, we would like to predict which category the article would fall under.
 
-```bash
-$ docker run --rm -v $(pwd):/home/jovyan jupyter/scipy-notebook python train.py
-```
-
-Finally, you should be able to pass the url of a wikipedia page and it will generate a prediction for the best category for that page, along with a probability of that being the correct category. 
-
-Make it so that your code can be run via a python script e.g.
-
-```bash
-$ docker run --rm -v $(pwd):/home/jovyan jupyter/scipy-notebook python predict.py #URL#
-```
-
-## Infrastructure
-
-We recommend that you run a MongDB server on a dedicated t2.micro instance. Feel free to run your Jupyter environment either on another instance or locally.
+Also, the scripts could be cleaned up a bit to be less computationally expensive. Currently, it takes ~1-2 seconds to collect a single page's contents.
 
 
